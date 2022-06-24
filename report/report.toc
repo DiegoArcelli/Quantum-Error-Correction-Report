@@ -1,7 +1,0 @@
-\contentsline {section}{\numberline {1}Quantum Error Correction}{2}{}%
-\contentsline {section}{\numberline {2}General Framework}{2}{}%
-\contentsline {section}{\numberline {3}Correcting single qubit errors}{3}{}%
-\contentsline {subsection}{\numberline {3.1}Correcting bit flip errors}{3}{}%
-\contentsline {subsection}{\numberline {3.2}Correcting phase flip errors}{4}{}%
-\contentsline {subsection}{\numberline {3.3}Nine-qubits correcting code}{4}{}%
-\contentsline {subsection}{\numberline {3.4}Correcting generic errors}{5}{}%
