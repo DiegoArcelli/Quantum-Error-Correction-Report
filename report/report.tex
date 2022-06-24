@@ -8,7 +8,7 @@
 \usetikzlibrary{quantikz}
 \usepackage{mathtools}
 % \usepackage[a4paper, left = 3.5cm, right = 3.5cm, top = 3.5cm, bottom = 3.5cm ]{geometry}
-%\usepackage[a4paper, left = 2.5cm, right = 2.5cm, top = 2.5cm, bottom = 2.5cm ]{geometry}
+\usepackage[a4paper, left = 2.5cm, right = 2.5cm, top = 2.5cm, bottom = 2.5cm ]{geometry}
 \usepackage{listings}
 
 \newtheorem{definition}{Definition}[section]
@@ -40,7 +40,7 @@
 	The space of all the possible encoded space will form a sub-space of the Hilbert space that we'll call the Quantum Error Correcting Code (QECC). If $\ket{\psi}$ is composed by $k$ qubit, and with the encoding we add $n$ ancillary qubits, then the code $\mathcal{C}$ will be a sub-space of the $2^{k+n}$ Hilbert space. The idea of adding ancillary qubits, is to use them to store the information about the error that occurred, which we call the \textbf{error syndrome}. Then we define a recovery operator $\mathcal{R}$ that, if an error occurs on the encoded state $\ket{\psi_{enc}}$, will undo the effect of the error, based on the information gained with the error syndrome. Finally we'll decode $\ket{\psi_{enc}}$ back to $\ket{\psi}$ that, with high probability, will not contain effects of the error.\\
 	In general given a quantum code $\mathcal{C} \subset \mathcal{H}$, we say that a noise operator $\mathcal{E}$ is recoverable it there exists a recovery operator $\mathcal{R}$ such that for every density matrix $\rho$ associated with a state $\ket{\psi} \in \mathcal{C}$:
 	\[ \mathcal{R(\mathcal{E}(\rho))} = \rho\]
-	In the following sections we'll analyze some of the most relevant type of errors and we'll show circuits which can detect and correct the errors, using the framework we just explained.
+	In the following sections we'll analyze some of the most relevant type of errors and we'll show circuits which can detect and correct the errors, using the framework we just explained.	
 		
 	\section{Correcting single qubit errors}
 	\subsection{Correcting bit flip errors}
