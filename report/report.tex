@@ -91,7 +91,10 @@
 	\[ \alpha\ket{0} + \beta\ket{1} \rightarrow \frac{\alpha}{\sqrt{8}}(\ket{000} + \ket{111})^{\otimes 3}+ \frac{\beta}{\sqrt{8}} (\ket{000} - \ket{111})^{\otimes 3}\]
 	So we have three block of three qubits each. Within each block, all the qubit are supposed to be the same, so we can run the bit flip error correction circuit in every one of the block to protect each block by bit flip errors. Now, if we consider the thee block, the sign of every block should be the same, but if there's been a phase flip error in one of the block, the sign on that block will be flipped. So we can run the phase flip correction circuits on the three block to correct the phase error.  
 	
-
+	\[ (\alpha\ket{0} + \beta\ket{1})\ket{00000000} \]
+	\[ \alpha\ket{000000000} + \beta\ket{100000000} \]
+	\[ \alpha\ket{000000000} + \beta\ket{100100100} \]
+	\[ \alpha\ket{+00+00+00} + \beta\ket{-00-00-00} \]
 	
 	\subsection{Correcting generic errors}
 	Since now we only saw bit flip and phase flip errors, but how do we deal with other type of errors, like a generic rotation of the qubit in the Bloch sphere. Consider a generic error on a single qubit defined by a matrix $E \in \mathbb{C}^{2 \times 2}$, and consider the four Pauli matrices $I$, $X$, $Y$ and $Z$. As we already saw $X$ and $Z$ represent respectively bit flip and phase flip errors. Since $Y = iXZ$, it can be seen as bit flip error followed by a phase flip error (the global phase factor $i$ does not matter), while the gate $I$ can be simply seen as the no-error gate. These four matrices span the space of the $2 \times 2$ complex matrices, so the before error matrix $E$ can be written as:
