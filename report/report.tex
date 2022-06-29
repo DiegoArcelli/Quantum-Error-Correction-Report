@@ -8,7 +8,7 @@
 \usetikzlibrary{quantikz}
 \usepackage{mathtools}
 % \usepackage[a4paper, left = 3.5cm, right = 3.5cm, top = 3.5cm, bottom = 3.5cm ]{geometry}
-\usepackage[a4paper, left = 2.5cm, right = 2.5cm, top = 2.5cm, bottom = 2.5cm ]{geometry}
+\usepackage[a4paper, left = 2cm, right = 2cm, top = 2cm, bottom = 2cm ]{geometry}
 \usepackage{listings}
 
 \newtheorem{definition}{Definition}[section]
@@ -18,14 +18,15 @@
 	
 	\begin{titlepage}
 		
-		\title{Quantum Error Correction}
-		\author{Diego Arcelli}
+		\title{Report of Introduction to Quantum Computing \\ Quantum Error Correction}
+		\author{Student: Diego Arcelli\\ Student ID: 647979 \\
+			Professors: Gianna Maria Del Corso,\\Anna Bernasconi, Roberto Bruni}
+		\date{Academic Year 2021-2022}
 		\maketitle
 		\centering
 		\includegraphics[width=10cm]{./images/unipi_logo.png}
 		
 	\end{titlepage}
-	
 	\tableofcontents
 	\newpage
 	
@@ -45,21 +46,36 @@
 	\section{Correcting single qubit errors}
 	\subsection{Correcting bit flip errors}
 	Let's start with the simplest error that we might have, the bit flip error, where a generic qubit in state $\alpha\ket{0} + \beta\ket{1}$ it's changed into $\alpha\ket{1} + \beta\ket{0}$ with probability $p$. This can be seen as an application of the $X$ Pauli's gate to the qubit. To correct this kind of errors we use the following three bit encoding:
-	\[ \ket{0}\rightarrow \ket{000}, \ \ \ \ket{1}\rightarrow \ket{111}\]
-	which applied to a generic qubit is:
 	\[ \alpha\ket{0} + \beta\ket{1} \rightarrow \alpha\ket{000} + \beta\ket{111}\]
 	So we encoded physical qubits to a sequence of logical qubits. Note that this is not a violation of the no cloning theorem since we're not mapping $\alpha\ket{0} + \beta\ket{1}$ to $(\alpha\ket{0} + \beta\ket{1})^{\otimes3}$. \\
 	The idea we want to apply is to check if the value of the three qubit is the same, if not, we impose the value of the majority bit. As we said earlier we cannot do that by measuring the state, otherwise the superposition will be destroyed. What we can do instead is using some extra qubits, to store in them the information of which qubit of the state has been flipped. All this can be done with the following circuit:
-	\begin{center}
-		\begin{quantikz}
-			\lstick{$\ket{\psi}$} & \ctrl{1} & \ctrl{2} & \ctrl{3} & \qw & \qw & \qw & \qw & \gate{X^{\lnot x \land y}}\\
-			\lstick{$\ket{0}$} & \targ{} & \qw & \qw  & \ctrl{2} & \ctrl{3} & \qw & \qw & \gate{X^{x \land y}}  \\
-			\lstick{$\ket{0}$} & \qw & \targ{} & \qw & \qw & \qw & \ctrl{2} & \qw & \gate{X^{x \land \lnot y}} \\
-			\lstick{$\ket{0}$} & \qw & \qw & \targ{} & \targ{} & \qw & \qw &  \meter{} & \cw \ x \\
-			\lstick{$\ket{0}$} & \qw & \qw & \qw & \qw & \targ{} & \targ{} &  \meter{} & \cw \ y\\
-		\end{quantikz}
-	\end{center}
+	
+	\begin{figure}[H]
+	\centering
+	\resizebox{8cm}{!}{%
+	\begin{quantikz}
+		\lstick{$\ket{\psi}$} & \ctrl{1}\gategroup[3,steps=2,style={dashed,
+			rounded corners,fill=blue!10, inner xsep=2pt},
+		background]{{\sc Encoding}} & \ctrl{2} & \qw & \ctrl{3}\gategroup[5,steps=4,style={dashed,
+			rounded corners,fill=blue!10, inner xsep=2pt},
+		background]{{\sc Detection}} & \qw & \qw & \qw & \qw & \gate{X^{\lnot x \land y}}\gategroup[3,steps=1,style={dashed,
+			rounded corners,fill=blue!10, inner xsep=2pt},
+		background]{{\sc Correction}} & \qw & \ctrl{2}\gategroup[3,steps=2,style={dashed,
+			rounded corners,fill=blue!10, inner xsep=2pt},
+		background]{{\sc Decoding}} & \ctrl{1} & \qw\\
+		\lstick{$\ket{0}$}  & \targ{} & \qw & \qw & \qw & \ctrl{2} & \ctrl{3} & \qw & \qw & \gate{X^{x \land y}} & \qw & \qw & \targ{} & \qw\\
+		\lstick{$\ket{0}$}  & \qw & \targ{} & \qw & \qw & \qw & \qw & \ctrl{2} & \qw & \gate{X^{x \land \lnot y}} & \qw & \targ{} & \qw & \qw\\
+		\lstick{$\ket{0}$} & \qw & \qw & \qw & \targ{} & \targ{} & \qw & \qw & \meter{}\gategroup[2,steps=2,style={dashed,
+			rounded corners,fill=blue!10, inner xsep=2pt},
+		background, label style={label position=below,anchor=
+			north,yshift=-0.2cm}]{{\sc Syndrome}} & \cw \ x &  &  &  \\
+		\lstick{$\ket{0}$} & \qw & \qw & \qw & \qw & \qw & \targ{} & \targ{} & \meter{} & \cw \ y &  &  & 
+	\end{quantikz}
+	}
+	\end{figure}
+	
 	The first two CNOT gates are used to apply the three bits encoding. Then with the second two CNOT gates we check if the first two qubits are equal. If they are equal and they're both $\ket{0}$ then the first ancilla quibt is not flipped. If they are equal an they're both $\ket{1}$ the first ancilla qubit it's flipped twice (so it goes back to 0). If they're different the ancilla qubit is flipped and so it is set to $\ket{1}$. With the last two CNOT gates we repeat the same procedure, but this thy we compare the second and the third qubits and we act on the second ancillary qubit. Finally we measure the ancillary qubits and we get the values $x$ and $y$. The value of $x$ tells us if the first and the second qubit were the same, while the value of $y$ tells us if the second and the third qubit were the same. 
+	\iffalse
 	\begin{table}[H]
 		\begin{center}
 		\begin{tabular}{|c|c|c|}
@@ -72,6 +88,7 @@
 		\end{tabular}
 		\end{center}
 	\end{table}
+	\fi
 	Note that if two or all the three qubits are flipped, this circuit will produce a wrong state. In general this strategy can be extended by using an encoding of length $n$. 
 
 	\subsection{Correcting phase flip errors}
@@ -89,19 +106,96 @@
 	\[ \alpha\ket{0} + \beta\ket{1} \rightarrow \alpha\ket{+++} + \beta\ket{---}\]
 	then we apply to each qubit of the encoded sequence the circuit of the bit flip encoding and we get:
 	\[ \alpha\ket{0} + \beta\ket{1} \rightarrow \frac{\alpha}{\sqrt{8}}(\ket{000} + \ket{111})^{\otimes 3}+ \frac{\beta}{\sqrt{8}} (\ket{000} - \ket{111})^{\otimes 3}\]
-	So we have three block of three qubits each. Within each block, all the qubit are supposed to be the same, so we can run the bit flip error correction circuit in every one of the block to protect each block by bit flip errors. Now, if we consider the thee block, the sign of every block should be the same, but if there's been a phase flip error in one of the block, the sign on that block will be flipped. So we can run the phase flip correction circuits on the three block to correct the phase error.  
+	So we have three block of three qubits each. Within each block, all the qubit are supposed to be the same, so we can run the bit flip error correction circuit in every one of the block to protect each block by bit flip errors. Now, if we consider the thee block, the sign of every block should be the same, but if there's been a phase flip error in one of the block, the sign on that block will be flipped. The idea is the same but this time we cannot apply the circuit we saw before, but what we can do is use this circuit:
+	\begin{figure}[H]
+	\centering
+	\resizebox{5cm}{!}{%
+	\begin{quantikz}
+		& \gate{H} & \ctrl{9} & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \ctrl{8}  & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \ctrl{7} & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \qw & \ctrl{6} & \qw & \qw & \ctrl{7} & \qw & \qw & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \qw & \qw & \ctrl{5} & \qw & \qw & \ctrl{6} & \qw & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \qw & \qw & \qw & \ctrl{4} & \qw & \qw & \ctrl{5} & \qw & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \qw & \qw & \qw & \qw & \qw  & \qw & \qw & \ctrl{4} & \qw & \qw & \gate{H} & \qw \\
+		& \gate{H} & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \ctrl{3} & \qw & \gate{H} & \qw \\ 
+		& \gate{H} & \qw& \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \ctrl{2} & \gate{H} & \qw \\
+		& \lstick{$\ket{0}$} & \targ{} & \targ{} & \targ{} & \targ{} & \targ{} & \targ{} & \qw & \qw & \qw & \qw & \qw  & \qw & \meter{} & \cw \ x \\
+		& \lstick{$\ket{0}$} & \qw & \qw & \qw & \qw & \qw & \qw & \targ{} & \targ{} & \targ{} & \targ{} & \targ{} & \targ{} & \meter{} & \cw \ z
+	\end{quantikz}
+	}
+	\end{figure}  
+	\noindent it rather messy, but what the circuit does is comparing the sign of the first block with the sign of the second block and if they're different set the first ancillary qubit to 1, and then it does the same thing with the second and third block, so that we'll measure a syndrome for each possible error.\\
 	
-	\[ (\alpha\ket{0} + \beta\ket{1})\ket{00000000} \]
-	\[ \alpha\ket{000000000} + \beta\ket{100000000} \]
-	\[ \alpha\ket{000000000} + \beta\ket{100100100} \]
-	\[ \alpha\ket{+00+00+00} + \beta\ket{-00-00-00} \]
+	To show why the circuit works, after the application of $H^{\otimes 9}$ the blocks will be transformed like that:
+	\[  (\ket{000} + \ket{111})^{\otimes 3} \rightarrow 2(\ket{000} + \ket{011} + \ket{101} + \ket{110})^{\otimes 3} = \ket{\psi^+}^{\oplus 3}\]
+	\[  (\ket{000} - \ket{111})^{\otimes 3} \rightarrow 2(\ket{001} + \ket{010} + \ket{100} + \ket{111})^{\otimes 3} = \ket{\psi^-}^{\oplus 3}\]
+	\[\alpha \ket{0} + \beta\ket{1} \rightarrow \alpha\ket{\psi^+}\ket{\psi^+}\ket{\psi^+} + \beta\ket{\psi^-}\ket{\psi^-}\ket{\psi^-}\]
+	showing all the steps would be too messy and not even interesting, but the idea is that now each qubit of each block is composed a series of binary string where for the encoding of $\ket{0}$ each string is composed by an even number of 1s, while for the encoding of $\ket{0}$ by an odd number of 1s. The circuit exploit this property, since if there's been no phase error, the first three CNOT gates will flip the first ancillary qubit an even number of times for the encoding of $\ket{0}$, and an odd number of times for the encoding of $\ket{1}$. The the second three CNOTs will flip the first qubits again an even number of times for the encoding of $\ket{0}$, and an odd number of times for the encoding of $\ket{1}$. Since an even number plus an even number is an even number, and an odd number plus an odd number is an odd number, for both the encoding of $\ket{0}$ and $\ket{1}$ it gets flipped an even number of times and so it remains $\ket{0}$.\\
+	Suppose that there's been a phase flip error on the first block. Then state after the application of the Hadamard gates will be:
+	\[ \alpha\ket{\psi^-}\ket{\psi^+}\ket{\psi^+} + \beta\ket{\psi^+}\ket{\psi^-}\ket{\psi^-}\]
+	so this time when we apply the first three CNOTs for the encoding of $\ket{0}$ the first ancillary qubit will be flipped an odd number of times, and an even number of times for the encoding of $\ket{1}$. Then with the second three CNOTs the ancillary qubits will be flipped an even number of times for the encoding of $\ket{0}$ and an odd number of times for the encoding of $\ket{1}$. Since an even number plus and odd number is an odd number, the first ancillary is flipped in total and odd number of times for both the encoding of $\ket{0}$ and $\ket{1}$. The same reasoning can be applied with the second and third triples of CNOTs and with the third and the fourth.
 	
 	\subsection{Correcting generic errors}
 	Since now we only saw bit flip and phase flip errors, but how do we deal with other type of errors, like a generic rotation of the qubit in the Bloch sphere. Consider a generic error on a single qubit defined by a matrix $E \in \mathbb{C}^{2 \times 2}$, and consider the four Pauli matrices $I$, $X$, $Y$ and $Z$. As we already saw $X$ and $Z$ represent respectively bit flip and phase flip errors. Since $Y = iXZ$, it can be seen as bit flip error followed by a phase flip error (the global phase factor $i$ does not matter), while the gate $I$ can be simply seen as the no-error gate. These four matrices span the space of the $2 \times 2$ complex matrices, so the before error matrix $E$ can be written as:
 	\[ E = \alpha_0I + \alpha_1X + \alpha_2Y + \alpha_3Z, \quad \alpha_0, \alpha_1, \alpha_2, \alpha_3 \in \mathbb{C}\]
-	Basically we've rewritten $E$ as a linear combination of bit flip and phase flip errors, which we already know how to solve. This is important because there's a theorem which state that if a code $\mathcal{C}$ corrects a set of errors $\mathcal{E} = \{E_i\}$, then $\mathcal{C}$ corrects also the span of $\mathcal{E}$. So if we're able to correct bit flip and phase flip errors, then we're able to correct any kind of error. 
-		
+	Basically we've rewritten $E$ as a linear combination of bit flip and phase flip errors, which we already know how to solve. This is important because there's a theorem which state that if a code $\mathcal{C}$ corrects a set of errors $\mathcal{E} = \{E_i\}$, then $\mathcal{C}$ corrects also the span of $\mathcal{E}$. So if we're able to correct bit flip and phase flip errors, then we're able to correct any kind of error.
 	
+	\section{Stabilizer codes}
+	It turns out that the codes that we saw so far and many others can be described using a particular formalism, introduced by Gottersman in \cite{Gottesman1997StabilizerCA}, which makes it easier to define quantum error correcting codes. In the following section we'll introduce the stabilizer formalism and we'll see how we can apply it to quantum error correction.
+	
+	\subsection{Stabilizer formalism}
+	We say that a unitary operator $U$ stabilizes the state $\ket{\psi}$ if $U\ket{\psi} = \ket{\psi}$, which means that $\ket{\psi}$ is an eigenstate of $U$ with eigenvalue $1$. If $V$ and $U$ stabilize $\ket{\psi}$ the also their product and their inverses stabilize $\ket{\psi}$. Since matrix multiplication is an associative operation, this means that the set of unitary matrices that stabilizes $\ket{\psi}$ form a group. 	
+	Consider the set of Pauli operators $\Pi = \{I,X,Y,Z\}$, we then define $\Pi^n$ as:
+	\[\Pi^n = \{A_1\otimes \dots \otimes A_n\ \colon A_j \in \Pi\ \forall j\}\]
+	which is the set $2^n\times2^n$ matrices which can be obtained by the tensor product of $n$ Pauli matrices. A stabilizer $\mathcal{S}$ is an abelian subgroup of $\Pi^n$. \\
+ 	Given a stabilizer $\mathcal{S}$ we can define the code-space generated by $\mathcal{S}$ as $\mathcal{T}(\mathcal{S}) = \{ \ket{\psi} \in \mathcal{H} \colon M\ket{\psi} = \ket{\psi }\ \forall M \in \mathcal{S}\}$ which is the set of state stabilized by all the elements of $\mathcal{S}$. We can interpret $\mathcal{T}(\mathcal{S})$ as a QECC where the states in $\mathcal{T}(\mathcal{S})$ are the encoded states.
+	
+	\subsection{Thee and nine qubits encoding revisited}
+	Let's now revisit the three qubit code for bit flip correction. What we were trying to do was check if the first and the second qubits where the same, and the same thing for the second and the third qubits. We can equivalently say that we where verifying if the encodes state has eigenvalue $1$ with respect to the operators $Z_1 = Z\otimes Z \otimes I$ and $Z_2 = I \otimes Z \otimes Z$, since:
+	\[(Z\otimes Z \otimes I)(\alpha\ket{000} + \beta\ket{111}) = \alpha\ket{000} + \beta\ket{111}\]
+	if instead there's a bit flip error in the first qubit we get that:
+	\[(Z\otimes Z \otimes I)(\alpha\ket{010} + \beta\ket{101}) = -(\alpha\ket{010} + \beta\ket{101}) \]
+	so the eigenvalue of the state wit respect to that operator becomes $-1$. So what we were doing was checking if the encoded state has eigenvalue 1 with respect both of $Z_1$ and $Z_2$, while if for $Z_1$ has eigenvalue $-1$ it means that the first and the second qubits are different, while if it has eigenvalue $1$ with $Z_2$, it means that the second and the second qubits are different. It's easy to check that we could have done the same bit flip correcting procedure, by comparing first the first and the second qubits, and then the first and the third, the syndrome would have been different but it could be used to correct the error. In therm of stabilizers, this corresponds to using the matrices $Z_1$ (the same we used before) and $Z_3 = Z \otimes I \otimes Z$, since also for $Z_3$ we have $Z_3 \ket{\psi_{enc}} = \ket{\psi_{enc}}$. In fact the set of stabilizers of $\ket{\psi_{enc}}$ is $\mathcal{S} =\{Z_1, Z_2, Z_3\}$, but we can only use $Z_1$ and $Z_2$ because they are generators of $Z_3$, since $Z_1Z_2 = Z_2Z_1 = Z_3$. \\
+	Another way to put this is by saying that the correcting code must have eigenvalue 1 with respect of the operators:
+	\[
+	\begin{array}{c|c c c}
+		g_1 & Z & Z & I \\
+		g_2 & I & Z & Z \\
+	\end{array}
+	\]
+	The same reasoning applies to the phase flip correction but with the matrices $X_1 = X\otimes X \otimes I$ and $X_2 = I \otimes X \otimes X$, and we won't show it since it's straightforward to verify that is true. Instead it is more interesting to see. In instead we think about the nine qubit encoding the corresponding stabilizer representation is the following:
+	\[
+	\begin{array}{c|c c c c c c c c c }
+		g_1 & Z & Z & I & I & I & I & I & I & I \\
+		g_2 & I & Z & Z & I & I & I & I & I & I \\
+		g_3 & I & I & I & Z & Z & I & I & I & I \\
+		g_4 & I & I & I & I & Z & Z & I & I & I \\
+		g_5 & I & I & I & I & I & I & Z & Z & I \\
+		g_6 & I & I & I & I & I & I & I & Z & Z \\
+		g_7 & X & X & X & X & X & X & I & I & I \\
+		g_8 & I & I & I & X & X & X & X & X & X \\
+	\end{array}
+	\]
+	the first size basically correspond to the bit flip stabilizer applied to each group of three qubits. 
+	
+	\subsection{Errors with stabilizer codes}
+	 Consider an error matrix $E \in \Pi^n$. $E$ can either commute or anti-commute with the operators in $\mathcal{S}$. If $\forall M \in \mathcal{S}\ ME = -EM$ then $ME\ket{\psi} = -EM\ket{\psi} = -E\ket{\psi}$, thus the error defined by $E$ can be detected. If instead $\forall M \in \mathcal{S}\ ME = EM$ then $ME\ket{\psi} = EM\ket{\psi} = E\ket{\psi}$, which means that this error cannot be detected. So we define $\mathcal{N}(\mathcal{S}) = \{E \in \Pi^n \colon EM = ME, \ \forall M \in \mathcal{S}\}$ which can be seen as the set of errors which cannot be detected by the code $\mathcal{T}(\mathcal{S})$. We can also define the distance of a code, which is the smallest weight of an operator in the set $\mathcal{N}(\mathcal{S}) \setminus \mathcal{S}$, where the weight is the number of elements in the tensor product which compose the operator that are not the identity. 
+	
+	
+	
+	\subsection{Five qubit correction code}
+	The fine qubit correcting code is the smallest error correcting code which is able to detect both bit flip and phase flip error on one qubit. For this code we'll do the opposite procedure we did for the previous codes. We first define the stabilizer, and then we try to infer the circuit form the stabilizer. 
+	\[
+	\begin{array}{c|c c c c c}
+		M_1 & X & Z & Z & X & I \\
+		M_2 & I & X & Z & Z & X \\
+		M_3 & X & I & X & Z & Z \\
+		M_4 & Z & X & I & X & Z \\
+	\end{array}
+	\]
+	
+	\newpage
 	\bibliographystyle{unsrt}
 	\bibliography{bibliography}
 
