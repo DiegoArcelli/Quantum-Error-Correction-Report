@@ -28,18 +28,17 @@
 		\includegraphics[width=10cm]{./images/unipi_logo.png}
 		
 	\end{titlepage}
-	\tableofcontents
+	%\tableofcontents
 	\newpage
 	
-	\section{Quantum Error Correction}
+	\section{Introduction}
 	 
-	The hardware devices used to implement quantum circuits are sensitive to noise, much more than classical computer. This might cause the qubits carried by quantum circuits to be modified in an unpredictable way. For this reason being able to detect and correct these errors it's a topic of major importance. \\
-	Sadly handling errors in the quantum case it's more troublesome than classical computing: first, we cannot copy arbitrary qubits (because of the no cloning theorem), then we cannot measure a qubit to check its state because this would destroy the superposition and, moreover, an error on a qubit is a continuous error (while in classical computing we only have bits flip errors).
+	The hardware devices used to implement quantum computers are highly prone to noise, which can affect the state of the qubits during the computations of a quantum circuit. For this reason being able to detect and correct those errors is a topic of major relevance. Sadly handling errors in the quantum case it's more troublesome than in classical computing: first, we cannot copy arbitrary qubits (because of the no cloning theorem), then we cannot measure a qubit to check its state because this would destroy the superposition and, moreover, an error on a qubit is a continuous error, while in classical computing we only have bit flip errors. 
 	
 	\section{General Framework}
-	We start by describing a general framework for quantum error correction, and in the next section we'll se how it can be applied in practice. The first step to protect a quantum state from a possible error is to define an error model, which is a description of the type of error it might happen. Once we have the error model, in order to defend a quantum state $\ket{\psi}$ from the error that might occur, we'll define an encoding operator $U_{enc}$ which, by adding some extra ancillary qubits to the state, will produce an encoded state $\ket{\psi_{enc}}$:
+	We start by describing a general framework for quantum error correction, and in the next section we'll se how it can be applied in practice. The first step to protect a quantum state $\ket{\psi}$ from a possible error is to define an error model, which is a description of the type of error it might happen. Once we have the error model, in order to defend a quantum state $\ket{\psi}$ from the error that might occur, we'll define an encoding operator $U_{enc}$ which, by adding some extra ancillary qubits to the state, will produce an encoded state $\ket{\psi_{enc}}$:
 	\[ U_{enc}\ket{\psi}\ket{00\dots0} = \ket{\psi_{enc}} \]
-	The space of all the possible encoded states will form a sub-space of the Hilbert space that we'll call the Quantum Error Correcting Code (QECC). If $\ket{\psi}$ is composed by $k$ qubit, and with the encoding we add $n$ qubits, then the code $\mathcal{C}$ will be a sub-space of the $2^{k+n}$ Hilbert space. The idea of encoding the state in a higher dimensional state, is that if the error occurs in the encoded state, it will leave some information which can be used to identify the effect of the error. Then we define a recovery operator $\mathcal{R}$ that, if an error occurs on the encoded state $\ket{\psi_{enc}}$, will undo the effect of the error, based on the information gained with the error syndrome. Finally we'll decode $\ket{\psi_{enc}}$ back to $\ket{\psi}$ with a decoding operator:
+	The space of all the possible encoded states will form a sub-space of the Hilbert space that we'll call the Quantum Error Correcting Code (QECC). If $\ket{\psi}$ is composed by $k$ qubit, and with the encoding we add $n$ qubits, then the code $\mathcal{C}$ will be a sub-space of the $2^{k+n}$ Hilbert space. The idea of encoding the state in a higher dimensional state, is that if the error occurs in the encoded state, it will leave some information which can be used to identify the effect of the error. Then we define a recovery operator $\mathcal{R}$ that, if an error occurs on the encoded state $\ket{\psi_{enc}}$, will undo the effect of the error.e. Finally we'll decode $\ket{\psi_{enc}}$ back to $\ket{\psi}$ with a decoding operator:
 	\[U_{dec}\ket{\psi_{enc}} = \ket{\psi}\ket{0\dots0}\]
 	In general given a quantum code $\mathcal{C} \subset \mathcal{H}$, we say that a noise operator $\mathcal{E}$ is recoverable it there exists a recovery operator $\mathcal{R}$ such that for every density matrix $\rho$ associated with a state $\ket{\psi} \in \mathcal{C}$:
 	\[ \mathcal{R(\mathcal{E}(\rho))} = \rho\]
