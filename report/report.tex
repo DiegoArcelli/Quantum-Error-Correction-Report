@@ -149,12 +149,13 @@
 	Then we correct the block with the different sign, by applying a $Z$ gate to any qubit of that block, based on the value of the syndrome measured. Note that the nine qubits code can protect the quantum state against simultaneous phase flip error and three bit flip errors, but only if every bit flip error acts different blocks.\\ The full circuit is implemented in the notebook \verb|nine_qubit_code.ipynb|.
 	
 	\subsection{Correcting generic errors}
-	Since now we only saw bit flip and phase flip errors, but of course there are many other type of errors. Consider a generic error on a single qubit defined by a matrix $E \in \mathbb{C}^{2 \times 2}$, and consider the four Pauli matrices $I$, $X$, $Y$ and $Z$. As we already said $X$ and $Z$ represent respectively bit flip and phase flip error, $Y$ can be seen as bit flip error followed by a phase flip error and the gate $I$ can be simply seen as the no-error gate. These four matrices span the space of the $2 \times 2$ complex matrices, so $E$ can be written as:
+	Since now we only saw bit flip and phase flip errors, but of course there are many other types of errors. Consider a generic error on a single qubit defined by a matrix $E \in \mathbb{C}^{2 \times 2}$, and consider the four Pauli matrices $I$, $X$, $Y$ and $Z$. As we already said $X$ and $Z$ represent respectively bit flip and phase flip error, $Y$ can be seen as bit flip error followed by a phase flip error and the gate $I$ can be simply seen as the no-error gate. These four matrices span the space of the $2 \times 2$ complex matrices, so $E$ can be written as:
 	\[ E = \alpha_0I + \alpha_1X + \alpha_2Y + \alpha_3Z, \quad \alpha_0, \alpha_1, \alpha_2, \alpha_3 \in \mathbb{C}\]
-	So we've rewritten $E$ as a linear combination of bit flip and phase flip errors, which we already know how to correct. If a state $\ket{\psi}$ is affected by the error $E$ then we can write the resulting state as: 
+	So we've rewritten $E$ as a linear combination of bit flip and phase flip errors, which we already know how to correct. If a state $\ket{\psi}$ is affected by the error $E$, then we can write the resulting state as: 
 	\[ E\ket{\psi} = \alpha_0\ket{\psi} + \alpha_1X\ket{\psi} + \alpha_2Y\ket{\psi} + \alpha_3Z\ket{\psi} \]
 	If we apply a circuit to correct the error on this state, we'll get a syndrome for each term of the superposition:
 	\[ \alpha_0\ket{\psi}\ket{I \text{ syndrome}} + \alpha_1X\ket{\psi}\ket{X \text{ syndrome}} + \alpha_2Y\ket{\psi}\ket{Y \text{ syndrome}} + \alpha_3Z\ket{\psi}\ket{Z \text{ syndrome}} \]
+	When we measure the syndrome, the state will collapse to one of the four terms of the superposition: $\ket{\psi}\ket{I \text{ syndrome}}$, $X\ket{\psi}\ket{X \text{ syndrome}}$, $Y\ket{\psi}\ket{Y \text{ syndrome}}$ or $Z\ket{\psi}\ket{Z \text{ syndrome}}$, and we can correct the error according to the syndrome measured and recover $\ket{\psi}$.
 	
 	\section{Stabilizer codes}
 	The correcting codes we saw so far and many others can be described using a particular formalism, called the stabilizer formalism, introduced by Gottersman in \cite{Gottesman1997StabilizerCA}, which makes it easier to define quantum error correcting codes. In the following section we'll introduce the stabilizer formalism and we'll see how we can apply it to quantum error correction.\\
@@ -256,6 +257,8 @@
 	 
 	\newpage
 	\nocite{devitt2013quantum}
+	\nocite{nielsen2002quantum}
+	\nocite{10.5555/1206629}
 	\bibliographystyle{unsrt}
 	\bibliography{bibliography}
 
